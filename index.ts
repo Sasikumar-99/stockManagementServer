@@ -13,7 +13,7 @@ const cors = Cors
 
 
 export const init = async()=>{
-  const allowedOrigins =[/^https?:\/\/\w+(\.\w+)*(:[0-9]+)?(\/.*)?$/,'https://gurustockmanagement.web.app/home'] ;
+  const allowedOrigins =[/^https?:\/\/\w+(\.\w+)*(:[0-9]+)?(\/.*)?$/,'https://gurustockmanagement.web.app','http://localhost:8100'] ;
   express.use(cors({
     origin:allowedOrigins
   }));
