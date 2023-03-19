@@ -19,11 +19,22 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const controller_1 = require("./controller/controller");
 const environment_1 = require("./environment");
-var Service = require('node-windows').Service;
 const express = (0, express_1.default)();
 const mongoose = mongoose_1.default;
 const bodyParser = body_parser_1.default;
 const cors = cors_1.default;
+const init = () => __awaiter(void 0, void 0, void 0, function* () {
+    const allowedOrigins = [/^https?:\/\/\w+(\.\w+)*(:[0-9]+)?(\/.*)?$/, 'https://gurustockmanagement.web.app', 'http://localhost:8100'];
+    express.use(cors({
+        origin: allowedOrigins
+    }));
+    express.use(bodyParser.urlencoded({ extended: false }));
+    express.use(bodyParser.json());
+    mongoose.set('strictQuery', true);
+    dbConnect();
+});
+exports.init = init;
+(0, exports.init)();
 function dbConnect() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -62,17 +73,4 @@ function hostServer() {
         }
     });
 }
-const init = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(Service);
-    const allowedOrigins = /^https?:\/\/\w+(\.\w+)*(:[0-9]+)?(\/.*)?$/;
-    express.use(cors({
-        origin: allowedOrigins
-    }));
-    express.use(bodyParser.urlencoded({ extended: false }));
-    express.use(bodyParser.json());
-    mongoose.set('strictQuery', true);
-    dbConnect();
-});
-exports.init = init;
-(0, exports.init)();
 //# sourceMappingURL=index.js.map
