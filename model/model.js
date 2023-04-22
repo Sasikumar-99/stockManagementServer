@@ -1,40 +1,87 @@
-"use strict";
-exports.__esModule = true;
-exports.ProductItemSchema = exports.ProductsSchema = exports.LoginSchema = void 0;
-var mongoose_1 = require("mongoose");
-var mongoose = mongoose_1["default"];
-var Schema = mongoose.Schema;
-var loginSchema = new Schema({
-    userName: {
-        type: String
-    },
-    password: {
-        type: String
-    },
-    secretKey: [],
-    productsId: {
-        type: String
-    }
-});
-var productSchema = new Schema({
-    productName: {
-        type: String
-    },
-    sellingPrice: {
-        type: String
-    },
-    receivedPrice: {
-        type: String
-    },
-    quantity: {
-        type: Number
-    }
-});
-var productsArray = new Schema({
-    products: [
-        productSchema
-    ]
-});
-exports.LoginSchema = mongoose.model('Users', loginSchema);
-exports.ProductsSchema = mongoose.model('Products', productsArray);
-exports.ProductItemSchema = mongoose.model('ProducyItemSchema', productSchema);
+const mongoose =require('mongoose');
+const Schema = mongoose.Schema
+const loginSchema = new Schema({
+  userName : {
+    type : String
+  },
+  password :{
+    type : String
+  },
+  secretKey : [],
+  productsId : {
+    type : String
+  },
+  chatId : {
+    type:String
+}
+})
+
+const productSchema = new Schema({
+  productName : {
+    type : String
+  },
+  sellingPrice : {
+    type : String
+  },
+  receivedPrice : {
+    type : String
+  },
+  quantity : {
+    type : Number
+  }
+})
+
+const productsArray = new Schema({
+  products : [
+    productSchema
+  ]
+})
+
+const chatsSchema =new Schema({
+  userName : {
+    type : String
+  },
+  chats :[]
+})
+
+const fromSchema = new Schema({
+  from : {
+    type : String
+  },
+  fromTime :{
+    type : String
+  }
+})
+
+const toSchema = new Schema({
+  to : {
+    type : String
+  },
+  toTime : {
+    type : String
+  }
+})
+
+const chatHistory = new Schema({
+      from : loginSchema,
+      to : loginSchema,
+      message:{
+        type : String
+      },
+      time:{
+        type : String
+      }
+})
+
+const chatCollection = new Schema({
+  chatsArchive : [chatHistory]
+})
+
+ const LoginSchema = mongoose.model('Users',loginSchema);
+ const ProductsSchema = mongoose.model('Products',productsArray)
+ const ProductItemSchema = mongoose.model('ProductItemSchema',productSchema)
+ const chatsArchive = mongoose.model('chatsArchive',chatCollection)
+ const chatItem = mongoose.model('chatItem',chatsSchema)
+ const chatItemHistory = mongoose.model('chatItemHistory',chatHistory)
+
+ module.exports = {LoginSchema,ProductsSchema,ProductItemSchema,chatsArchive,chatItem,chatItemHistory}
