@@ -43,10 +43,8 @@ async function dbConnect() {
   }
 }
 function setRoutes() {
-
   express.get("/getAllUser",getAllUsers);
   express.get("/getAllProducts/:id",getAllProducts);
-
   express.post("/login", createUserCollection);
   express.put("/updateUser/:id", updateLogin);
   express.post("/products", postProduct);
@@ -65,7 +63,7 @@ async function hostServer() {
   hostingServer.listen(port, () => {
     console.log(`server started at ${port}`);
   });
-  await socketConnection()
+  await socketConnection();
 }
 
 async function socketConnection() {
