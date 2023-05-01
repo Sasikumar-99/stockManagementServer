@@ -62,6 +62,7 @@ yarn-error.log
 testem.log
 /typings
 /.firebase
+./daemon
 
 # System files
 .DS_Store
