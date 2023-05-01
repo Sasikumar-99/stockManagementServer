@@ -340,65 +340,6 @@ const getAllReports = async (req, res, next) => {
   } catch (err) {}
 };
 
-// const reportGeneration = async(req,res,next)=>{
-//   try{
-//     const reports = await req.body;
-//     const id = req.params.id;
-//     const currentUserReports = await reportsCollections.findOne({_id:id})
-//     if(currentUserReports){
-//       const existingDateReports = currentUserReports.reportsArchive.filter(value =>value.date  === reports.date);
-//       const existingDateReportsIndex = currentUserReports.reportsArchive.findIndex(value =>value.date === reports.date);
-//       if(existingDateReports.length && existingDateReportsIndex!==-1){
-//         const newData = existingDateReports
-//         console.log(newData.soldData);
-//         newData.soldData.push(reports.soldData);
-//         const newUserReports = {...currentUserReports}
-//         newUserReports.splice(existingDateReportsIndex,1,newData)
-//           const existingReportUpdate = await reportsCollections.findOneAndUpdate({_id:id},{
-//             reportsArchive:newUserReports
-//           },{new:true})
-//           if(existingReportUpdate){
-//             res.status(200).json({
-//               error:false,
-//               message:'existing reports found updated successfully',
-//               body:existingReportUpdate
-//             })
-//           }else{
-//             res.status(503).json({
-//               error:true,
-//               message : 'existing reports not updated'
-//             })
-//           }
-//       }else{
-//           const newUserReports = await reportsCollections.findOneAndUpdate({_id:id},{
-//             $set:{
-//               reportsArchive:reports
-//             }
-//           },{new:true})
-//           if(newUserReports){
-//             res.status(200).json({
-//               error:false,
-//               message:'reports created successfully',
-//               body:newUserReports
-//             })
-//           }else{
-//             res.status(500).json({
-//               error:true,
-//               message : 'reports not created'
-//             })
-//           }
-//       }
-//     }else{
-//       res.status(404).json({
-//         error:true,
-//         message : 'could not fetch currentUserReports'
-//       })
-//     }
-//   }catch(err){
-
-//   }
-// }
-//chat
 const reportGeneration = async (req, res, next) => {
   try {
     const reports = await req.body;
