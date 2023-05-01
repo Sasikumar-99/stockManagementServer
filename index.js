@@ -1,7 +1,7 @@
 const { Server } = require("socket.io");
 const {environment} = require('./environment');
 const path = require('path');
-const {chatEmitted,chattingUsers,createUserCollection,
+const {getAllReports,reportGeneration,updateCategories,chatEmitted,chattingUsers,createUserCollection,
   postProduct,getAllProducts,deleteProducts,editProducts,updateLogin,getAllUsers} = require('./controller/controller.js');
 const express = require('express')();
 const mongoose = require('mongoose');
@@ -44,6 +44,7 @@ async function dbConnect() {
 }
 function setRoutes() {
   express.get("/getAllUser",getAllUsers);
+  express.get("/getAllReports/:id",getAllReports);
   express.get("/getAllProducts/:id",getAllProducts);
   express.post("/login", createUserCollection);
   express.put("/updateUser/:id", updateLogin);
@@ -56,6 +57,8 @@ function setRoutes() {
     "/deleteProducts/:productsId/:productItemIndex",
     deleteProducts
   );
+  express.put('/updateCategories/:id',updateCategories)
+  express.post('/reports/:id',reportGeneration)
 }
 
 async function hostServer() {

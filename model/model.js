@@ -8,11 +8,15 @@ const loginSchema = new Schema({
     type : String
   },
   secretKey : [],
+  categories:[],
   productsId : {
     type : String
   },
   chatId : {
     type:String
+},
+reportId:{
+  type:String
 }
 })
 
@@ -28,6 +32,9 @@ const productSchema = new Schema({
   },
   quantity : {
     type : Number
+  },
+  category : {
+    type : String
   }
 })
 
@@ -73,8 +80,41 @@ const chatHistory = new Schema({
       }
 })
 
+
+const soldData = new Schema({
+  category:{
+    type:String
+  },
+  productName:{
+    type:String
+  },
+  soldCount:{
+    type:Number
+  },
+  receivedPrice:{
+    type:Number
+  },
+  soldPrice:{
+    type:Number
+  },
+  profit:{
+    type:Number
+  }
+})
+
+const reports = new Schema({
+  date : {
+    type:String
+  },
+  soldData : []
+})
+
 const chatCollection = new Schema({
   chatsArchive : [chatHistory]
+})
+
+const reportsCollection = new Schema({
+  reportsArchive: [reports]
 })
 
  const LoginSchema = mongoose.model('Users',loginSchema);
@@ -83,5 +123,6 @@ const chatCollection = new Schema({
  const chatsArchive = mongoose.model('chatsArchive',chatCollection)
  const chatItem = mongoose.model('chatItem',chatsSchema)
  const chatItemHistory = mongoose.model('chatItemHistory',chatHistory)
+ const reportsCollections = mongoose.model('reportsCollection',reportsCollection)
 
- module.exports = {LoginSchema,ProductsSchema,ProductItemSchema,chatsArchive,chatItem,chatItemHistory}
+ module.exports = {reportsCollections,LoginSchema,ProductsSchema,ProductItemSchema,chatsArchive,chatItem,chatItemHistory}
