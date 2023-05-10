@@ -22,7 +22,7 @@ log.txt
 /www
 /platforms
 /plugins
-
+/daemon
 # Compiled output
 /tmp
 /out-tsc
