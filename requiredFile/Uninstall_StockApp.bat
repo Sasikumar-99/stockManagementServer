@@ -1,0 +1,1 @@
+nssm remove stock_app confirm

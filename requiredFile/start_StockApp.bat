@@ -1,0 +1,1 @@
+nssm start stock_app
