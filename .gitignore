@@ -20,6 +20,7 @@ package-lock.json
 # Ionic
 /.ionic
 /www
+/dist
 /platforms
 /plugins
 /daemon
