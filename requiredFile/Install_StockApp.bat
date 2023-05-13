@@ -1,3 +1,4 @@
 @echo off
 
-nssm install stock_app C:\Users\sasik\OneDrive\Desktop\Server\dist\server.exe
+nssm install Stock_App_Server C:\Users\sasik\OneDrive\Desktop\Server\dist\Stock_App_Server.exe
+nssm install Stock_App_FrontEnd C:\Users\sasik\OneDrive\Desktop\Server\dist\Stock_App_FrontEnd.exe

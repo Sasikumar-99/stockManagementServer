@@ -5,7 +5,7 @@ const path = require('path');
 
 const _FrontEnd_express = FrontEnd_express()
 
-const pathName = FrontEnd_express.static(path.resolve(__dirname,'Frontend'));
+const pathName = FrontEnd_express.static('buildFiles');
 
 _FrontEnd_express.use(pathName)
 

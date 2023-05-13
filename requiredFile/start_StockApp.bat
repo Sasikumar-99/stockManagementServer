@@ -1,1 +1,2 @@
-nssm start stock_app
+nssm start Stock_App_Server
+nssm start Stock_App_FrontEnd

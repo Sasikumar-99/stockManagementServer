@@ -1,1 +1,2 @@
-nssm remove stock_app confirm
+nssm remove Stock_App_Server confirm
+nssm remove Stock_App_FrontEnd confirm
