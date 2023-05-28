@@ -2,7 +2,7 @@ const { Server } = require("socket.io");
 const {environment} = require('./environment');
 const path = require('path');
 const {getAllReports,reportGeneration,updateCategories,chatEmitted,chattingUsers,createUserCollection,
-  postProduct,getAllProducts,deleteProducts,editProducts,updateLogin,getAllUsers} = require('./controller/controller.js');
+  postProduct,getAllProducts,deleteProducts,editProducts,updateLogin,getAllUsers,entryListSave,getEntryList} = require('./controller/controller.js');
 const express = require('express')();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -59,6 +59,8 @@ function setRoutes() {
   );
   express.put('/updateCategories/:id',updateCategories)
   express.post('/reports/:id',reportGeneration)
+  express.post('/entryList/:id',entryListSave)
+  express.get('/getEntryList/:id',getEntryList)
 }
 
 async function hostServer() {

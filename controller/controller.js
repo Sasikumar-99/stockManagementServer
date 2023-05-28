@@ -5,6 +5,7 @@ const {
   chatsArchive,
   chatItemHistory,
   reportsCollections,
+  entryCollection
 } = require("../model/model");
 const moment = require("moment");
 
@@ -22,7 +23,10 @@ const createUserCollection = async (req, res, next) => {
       const createReport = await reportsCollections.create({
         reportsArchive: [],
       });
-      if (createProducts && AssignChat) {
+      const EntryList = await entryCollection.create({
+        lists: [],
+      });
+      if (createProducts && AssignChat && createReport && EntryList) {
         const createCollection = await LoginSchema.create({
           userName: user.userName,
           password: user.password,
@@ -31,6 +35,7 @@ const createUserCollection = async (req, res, next) => {
           productsId: createProducts._id,
           chatId: AssignChat._id,
           reportId: createReport._id,
+          entryId:EntryList._id
         });
         if (createCollection) {
           res.status(200).json({
@@ -376,6 +381,70 @@ const reportGeneration = async (req, res, next) => {
   } catch (err) {}
 };
 
+const entryListSave = async (req,res,next)=>{
+  try{
+    const entryId = req.params.id;
+    const entryCollectionData = req.body;
+    const currentUserEntryList = await entryCollection.findOne({ _id: entryId });
+    if(currentUserEntryList){
+      const currentUserEntryUpdated = await entryCollection.findOneAndUpdate(
+        { _id: entryId },
+        {
+          $set: {
+            lists: entryCollectionData,
+          },
+        },
+        { new: true }
+      );
+      if(currentUserEntryUpdated){  
+        res.status(200).json({
+          error: false,
+          message: "entryList updated successfully",
+          body: currentUserEntryUpdated,
+        });
+      }else{
+        res.status(500).json({
+          error: true,
+          message: "existing Entry Found problem while updating"
+        });
+      }
+    }else{
+      res.status(404).json({
+        error: true,
+        message: "Existing Entry Not Found "
+      });
+    }
+  }catch(err){
+
+  }
+}
+const getEntryList = async (req,res,next)=>{
+  try{
+    const entryId = req.params.id;
+    if(entryId){
+    const currentUserEntryList = await entryCollection.findOne({ _id: entryId });
+    if(currentUserEntryList){
+      res.status(200).json({
+        error: false,
+        message: "entryList updated successfully",
+        body: currentUserEntryList.lists,
+      });
+    }else{
+      res.status(404).json({
+        error: true,
+        message: "Existing Entry Not Found"
+      });
+    }
+    }else{
+      res.status(404).json({
+        error: true,
+        message: "Existing Entry ID not found"
+      });
+    }
+  }catch(err){
+
+  }
+}
 const chatEmitted = async (data) => {
   if (this.inChatUsers) {
     const { chatId } = data.from;
@@ -472,4 +541,6 @@ module.exports = {
   getAllUsers,
   reportGeneration,
   getAllReports,
+  entryListSave,
+  getEntryList
 };
