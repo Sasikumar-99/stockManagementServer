@@ -3,7 +3,8 @@ const {environment} = require('./environment');
 const path = require('path');
 const {getAllReports,reportGeneration,updateCategories,chatEmitted,chattingUsers,createUserCollection,
   postProduct,getAllProducts,deleteProducts,editProducts,updateLogin,getAllUsers,entryListSave,getEntryList} = require('./controller/controller.js');
-const express = require('express')();
+const app = require('express')
+const express = app();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -21,6 +22,7 @@ const init = async () => {
       origin: '*',
     })
   );
+  express.use(app.static('Frontend/buildFiles'))
   express.use(bodyParser.urlencoded({ extended: false }));
   express.use(bodyParser.json());
   mongoose.set("strictQuery", true);
