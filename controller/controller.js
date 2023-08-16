@@ -2,8 +2,7 @@ const {
   LoginSchema,
   ProductsSchema,
   ProductItemSchema,
-  chatsArchive,
-  chatItemHistory,
+  chatSchema,
   reportsCollections,
   entryCollection
 } = require("../model/model");
@@ -17,12 +16,13 @@ const createUserCollection = async (req, res, next) => {
       const createProducts = await ProductsSchema.create({
         products: [],
       });
-      const AssignChat = await chatsArchive.create({
-        chatsArchive: [],
+      const AssignChat = await chatSchema.create({
+        chatsArchive: {},
       });
       const createReport = await reportsCollections.create({
         reportsArchive: [],
       });
+      
       const EntryList = await entryCollection.create({
         lists: [],
       });
@@ -33,6 +33,7 @@ const createUserCollection = async (req, res, next) => {
           secretKey: [],
           categories: [{ checked: true, name: "others" }],
           productsId: createProducts._id,
+          chatRoom : [],
           chatId: AssignChat._id,
           reportId: createReport._id,
           entryId:EntryList._id
@@ -445,74 +446,6 @@ const getEntryList = async (req,res,next)=>{
 
   }
 }
-const chatEmitted = async (data) => {
-  if (this.inChatUsers) {
-    const { chatId } = data.from;
-    const loggedUserChatData = await chatsArchive.findOne({ _id: chatId });
-    const chattingUserChatData = await chatsArchive.findOne({
-      _id: data.to.chatId,
-    });
-    if (loggedUserChatData && chattingUserChatData) {
-      loggedUserChatData.chatsArchive.push(data);
-      chattingUserChatData.chatsArchive.push(data);
-      const updatedLoggedUserChatData = await chatsArchive.findOneAndUpdate(
-        { _id: chatId },
-        {
-          chatsArchive: loggedUserChatData.chatsArchive,
-        },
-        { new: true }
-      );
-      const updatedChattingUserData = await chatsArchive.findByIdAndUpdate(
-        { _id: data.to.chatId },
-        {
-          chatsArchive: chattingUserChatData.chatsArchive,
-        },
-        { new: true }
-      );
-      if (updatedLoggedUserChatData && updatedChattingUserData) {
-        const response = {
-          error: false,
-          statusCode: 200,
-          message: "users chat found",
-          body: {
-            updatedLoggedUserChatData: updatedLoggedUserChatData,
-            updatedChattingUserData: updatedChattingUserData,
-          },
-        };
-        return response;
-      } else {
-        const response = {
-          error: true,
-          statusCode: 500,
-          message:
-            "could not update updatedLoggedUserChatData OR updatedChattingUserData",
-        };
-        return response;
-      }
-    } else {
-      const response = {
-        error: true,
-        statusCode: 404,
-        message: "could not find chat Data",
-      };
-      return response;
-    }
-  } else {
-    const response = {
-      error: true,
-      statusCode: 400,
-      message: "could not get the connected chatting users",
-    };
-    return response;
-  }
-};
-
-const inChatUsers = "";
-
-const chattingUsers = async (data) => {
-  this.inChatUsers = data;
-  return this.inChatUsers;
-};
 
 const updateProductsId = async (userData, Products) => {
   const getUserData = await LoginSchema.findOne({ _id: userData._id });
@@ -527,6 +460,126 @@ const updateProductsId = async (userData, Products) => {
     );
   }
 };
+
+
+const updateChatRoom = async(currentUser) => {
+  const currentChatRoomDetailsFrom = await LoginSchema.findOne({_id: currentUser.from.Id});
+  const currentChatRoomDetailsTo = await LoginSchema.findOne({_id: currentUser.to.Id});
+  ifCurrentIdExistFrom = currentChatRoomDetailsFrom.chatRoom.find(id => id === currentUser.from.Id);
+  ifCurrentIdExistTo = currentChatRoomDetailsTo.chatRoom.find(id => id === currentUser.to.Id);
+  let updated = false;
+
+  // if(!ifCurrentIdExistTo){
+  //   currentChatRoomDetailsTo.chatRoom.push(currentUser.from.Id);
+  //   const updateLoginSchema = await LoginSchema.findOneAndUpdate({_id: currentUser.from.Id},{
+  //     $set: {
+  //       chatRoom: currentChatRoomDetailsTo.chatRoom
+  //     }
+  //   },{new: true});
+  //   if(updateLoginSchema){
+  //     updated = true;
+  //   }else{
+  //     updated = false;
+  //   }
+  //   return updated;
+  // }else{
+  //   updated = true;
+  //   return updated;
+  // }
+
+  if( !ifCurrentIdExistFrom ) {
+    currentChatRoomDetailsFrom.chatRoom.push(currentUser.to.Id);
+    const updateLoginSchema = await LoginSchema.findOneAndUpdate({_id: currentUser.from.Id},{
+      $set: {
+        chatRoom: currentChatRoomDetailsFrom.chatRoom
+      }
+    },{new: true});
+
+    if(!ifCurrentIdExistTo){
+      currentChatRoomDetailsTo.chatRoom.push(currentUser.from.Id);
+      const updateLoginSchema = await LoginSchema.findOneAndUpdate({_id: currentUser.to.Id},{
+        $set: {
+          chatRoom: currentChatRoomDetailsTo.chatRoom
+        }
+      },{new: true});
+    }
+
+    if(updateLoginSchema){
+      updated = true;
+    }else{
+      updated = false;
+    }
+    return updated;
+  }else{
+    updated = true;
+    return updated;
+  }
+}
+
+const chatSave = async( chatDataOnMessage ) => {
+  const sentUser = await chatSchema.findOne({_id: chatDataOnMessage.to.chatId});
+  if ( sentUser ) {
+    if(sentUser.chatsArchive.size < 1){
+      sentUser.chatsArchive.set(chatDataOnMessage.from.Id,[chatDataOnMessage]);
+    } else {
+       const ifExistingChat =  sentUser.chatsArchive.get(chatDataOnMessage.from.Id);
+        if( ifExistingChat ){
+          ifExistingChat.push(chatDataOnMessage);
+          sentUser.chatsArchive.set(chatDataOnMessage.from.Id,ifExistingChat);
+        }else {
+          sentUser.chatsArchive.set(chatDataOnMessage.from.Id,[chatDataOnMessage]);
+        }
+    }
+    const updateChatArchive = await chatSchema.findOneAndUpdate({_id: chatDataOnMessage.to.chatId},
+      {
+        $set: {
+          chatsArchive: sentUser.chatsArchive,
+        },
+      },{new: true}
+      )
+      if( updateChatArchive ){
+        if(updateChatRoom(chatDataOnMessage)){
+          return 'chatSaved successful'
+        }else{
+          return 'Chat saved but could not update chatroom'
+        }
+      }else {
+        return 'error while Updating'
+      }
+  } else {
+    return 'error while fetching or saving chat'
+  }
+}
+
+const getRecentChat = async (user) => {
+  if(user){
+    const chatMap = await LoginSchema.findOne({_id: user.id});
+    if(chatMap){
+      return chatMap.chatRoom;
+    }else {
+      return 'could not able to fetch recent chats'
+    }
+  }else{
+    return 'user not found'
+  }
+}
+
+const getParticularUserMessages = async (userDetails) => {
+  if(userDetails){
+    const allChats = await chatSchema.findOne({_id: userDetails.chattingTo.chatDetailsID});
+    if(allChats){
+      const currentUserChat = allChats.chatsArchive.get(userDetails.current.id);
+      if(currentUserChat){
+        return currentUserChat;
+      }
+    }else{
+      return 'could not fetch chats'
+    }
+  }else {
+    return 'User details not found'
+  }
+}
+
 module.exports = {
   updateCategories,
   createUserCollection,
@@ -536,11 +589,12 @@ module.exports = {
   editProducts,
   updateLogin,
   updateProductsId,
-  chattingUsers,
-  chatEmitted,
   getAllUsers,
   reportGeneration,
   getAllReports,
   entryListSave,
-  getEntryList
+  getEntryList,
+  chatSave,
+  getRecentChat,
+  getParticularUserMessages
 };

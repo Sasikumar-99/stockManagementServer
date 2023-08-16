@@ -9,6 +9,7 @@ const loginSchema = new Schema({
   },
   secretKey : [],
   categories:[],
+  chatRoom:[],
   productsId : {
     type : String
   },
@@ -46,43 +47,6 @@ const productsArray = new Schema({
     productSchema
   ]
 })
-
-const chatsSchema =new Schema({
-  userName : {
-    type : String
-  },
-  chats :[]
-})
-
-const fromSchema = new Schema({
-  from : {
-    type : String
-  },
-  fromTime :{
-    type : String
-  }
-})
-
-const toSchema = new Schema({
-  to : {
-    type : String
-  },
-  toTime : {
-    type : String
-  }
-})
-
-const chatHistory = new Schema({
-      from : loginSchema,
-      to : loginSchema,
-      message:{
-        type : String
-      },
-      time:{
-        type : String
-      }
-})
-
 
 const soldData = new Schema({
   category:{
@@ -132,6 +96,43 @@ const entry = new Schema({
   }
 })
 
+const chatUser = new Schema({
+  Id:{
+    type: String
+  },
+  chatId: {
+    type: String
+  },
+  ref: {
+    type: String
+  },
+})
+
+const messageSchema = new Schema({
+  from: {
+    type: chatUser
+  },
+  to: {
+    type: chatUser
+  },
+  messageBody: {
+    type: String
+  },
+  messageType: {
+    type: String
+  },
+  read: {
+    type: Boolean
+  },
+  createdAt: {
+    type: String
+  }
+})
+
+const chatsArchive = new Schema({
+    chatsArchive:{type:Map, of:[messageSchema]}
+});
+
 const entryList = new Schema({
   lists : []
 })
@@ -142,10 +143,6 @@ const reports = new Schema({
   soldData : []
 })
 
-const chatCollection = new Schema({
-  chatsArchive : [chatHistory]
-})
-
 const reportsCollection = new Schema({
   reportsArchive: [reports]
 })
@@ -153,10 +150,7 @@ const reportsCollection = new Schema({
  const LoginSchema = mongoose.model('Users',loginSchema);
  const ProductsSchema = mongoose.model('Products',productsArray)
  const ProductItemSchema = mongoose.model('ProductItemSchema',productSchema)
- const chatsArchive = mongoose.model('chatsArchive',chatCollection)
- const chatItem = mongoose.model('chatItem',chatsSchema)
- const chatItemHistory = mongoose.model('chatItemHistory',chatHistory)
  const reportsCollections = mongoose.model('reportsCollection',reportsCollection)
  const entryCollection = mongoose.model('entryCollection',entryList)
-
- module.exports = {reportsCollections,LoginSchema,ProductsSchema,ProductItemSchema,chatsArchive,chatItem,chatItemHistory,entryCollection}
+ const chatSchema = mongoose.model('chatArchive', chatsArchive);
+ module.exports = {reportsCollections,LoginSchema,ProductsSchema,ProductItemSchema,entryCollection,chatSchema}

@@ -1,14 +1,16 @@
 const { Server } = require("socket.io");
 const {environment} = require('./environment');
 const path = require('path');
-const {getAllReports,reportGeneration,updateCategories,chatEmitted,chattingUsers,createUserCollection,
-  postProduct,getAllProducts,deleteProducts,editProducts,updateLogin,getAllUsers,entryListSave,getEntryList} = require('./controller/controller.js');
+const {getAllReports,reportGeneration,updateCategories,chatSave,createUserCollection,
+  postProduct,getAllProducts,deleteProducts,editProducts,updateLogin,getAllUsers,entryListSave,getEntryList,
+  getRecentChat,getParticularUserMessages} = require('./controller/controller.js');
 const app = require('express')
 const express = app();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
+const { MongoClient } = require("mongodb");
 const hostingServer =http.createServer(express);
 const io = new Server(hostingServer,{
   cors: {
@@ -76,18 +78,25 @@ async function hostServer() {
 async function socketConnection() {
   io.on("connection", (socket) => {
     console.log("user is connected");
+
     socket.on('message',(data)=>{
-      chatEmitted(data).then((value=>{
-        socket.emit('notification',value)
-      }))
-    }) 
+      chatSave(data).then(message => {
+        console.log(message);
+      });
+    })
     
-    socket.on('chatting-users',(usersInChat)=>{
-      chattingUsers(usersInChat).then((value)=>{
-        socket.emit('notification',{error:false,message:'Users Connected',body:value})
+    socket.on('recentChats',(user) => {
+      getRecentChat(user).then(recentChatDetails => {
+        socket.emit('recentChatDetails',recentChatDetails);
       })
     })
 
+    socket.on('getParticularUserMessages', (userDetails) => {
+      getParticularUserMessages(userDetails).then(userMessages => {
+        socket.emit('fetchedUserMessages',userMessages)
+      })
+    })
   });
+  
 }
 init();
