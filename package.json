@@ -28,7 +28,6 @@
     "gulp": "^4.0.2",
     "http": "^0.0.1-security",
     "moment": "^2.29.4",
-    "mongodb": "^5.7.0",
     "mongoose": "^6.10.0",
     "node-windows": "^1.0.0-beta.8",
     "nodemon": "^2.0.20",
