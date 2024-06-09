@@ -39,5 +39,8 @@
   },
   "bundledDependencies": [
     "node_modules"
+  ],
+  "bundleDependencies": [
+    "node_modules"
   ]
 }

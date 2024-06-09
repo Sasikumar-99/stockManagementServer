@@ -293,6 +293,7 @@ const updateLogin = async (req, res, next) => {
     }
   } catch (err) {}
 };
+
 const updateCategories = async (req, res, next) => {
   try {
     const category = await req.body;
@@ -419,6 +420,7 @@ const entryListSave = async (req,res,next)=>{
 
   }
 }
+
 const getEntryList = async (req,res,next)=>{
   try{
     const entryId = req.params.id;
@@ -492,7 +494,7 @@ const updateChatRoom = async(currentUser) => {
     const updateLoginSchema = await LoginSchema.findOneAndUpdate({_id: currentUser.from.Id},{
       $set: {
         chatRoom: currentChatRoomDetailsFrom.chatRoom
-      }
+      } 
     },{new: true});
 
     if(!ifCurrentIdExistTo){
